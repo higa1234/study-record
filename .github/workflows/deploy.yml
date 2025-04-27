@@ -64,6 +64,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build          # ← Vite が dist/ を作る
+        env: 
+          VITE_SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+          VITE_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_ANON_KEY}}
       - run: npm i -g firebase-tools
       - run: echo "${{ secrets.FIREBASE_KEY }}" | base64 -d > ${{ github.workspace }}/key.json
       - run: firebase deploy --only hosting

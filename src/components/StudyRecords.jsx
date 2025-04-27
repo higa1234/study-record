@@ -1,14 +1,20 @@
+import { DeleteButton } from "../atoms/button/DeleteButton";
+import { deleteStudyRecordsById } from "../utils/SupaBaseFunctions";
+
 export const StudyRecords = (props) => {
-    const {records} = props;
+    const {records, onClickDelete} = props;
     return (
       <div>
-        <ul>
-          {records.map((obj, index) => (
-            <li key={obj}>
-              <p>{obj.title} {obj.time} 時間</p>
-            </li>
+        <table>
+          <tbody>
+            {records.map((record) => (
+              <tr key={record.id}>
+                <td>{record.title}　{record.time} 時間</td>
+                <td><DeleteButton onClickDelete={() => onClickDelete(record.id)}/></td>
+              </tr>
           ))}
-        </ul>
+          </tbody>
+        </table>
       </div>
     );
 }

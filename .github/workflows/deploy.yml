@@ -1,51 +1,92 @@
-name: Deploy to firebase Hosting
+# name: Deploy to firebase Hosting
 
+# on:
+#     push:
+#     workflow_dispatch:
+
+# jobs:
+#     build:
+#         name: build
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: Checkout code
+#               uses: actions/checkout@v4
+#             - name: Setup Node.js
+#               uses: actions/setup-node@v4
+#               with:
+#                 node-version: '20'
+#             - name: Install dependencies
+#               run: npm install
+#             - name: Run build
+#               run: npm run build
+    
+#     deploy:
+#         name: deploy
+#         runs-on: ubuntu-latest
+#         needs: build
+#         steps:
+#           - name: Checkout code
+#             uses: actions/checkout@v4
+#           - name: Setup Node.js and cache
+#             uses: actions/setup-node@v4
+#             with:
+#               node-version: "20"
+#               cache: "npm"
+#           - name: Install firebase-tools
+#             run: npm install --save-dev firebase-tools
+#           - name: Decode Firebase service account key
+#             run: |
+#               echo "${{ secrets.FIREBASE_KEY }}" | base64 -d > ./firebase-key.json
+#               echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase-key.json" >> $GITHUB_ENV
+#           - name: change space
+#             run: ./node_modules/.bin/firebase use ${{ secrets.FIREBASE_PROJECT_ID }}
+#           - name: Deploy to Firebase Hosting
+#             run: |
+#               ./node_modules/.bin/firebase deploy
+#             env:
+#               FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+#               FIREBASE_CLI_EXPERIMENTS: webframeworks
+#           - name: delete rm firebase-key.json
+#             run: rm firebase-key.json
+#             if: ${{ always() }}
+
+name: Deploy to Firebase Hosting
 on:
-    push:
-    workflow_dispatch:
+  push:
+  workflow_dispatch:
 
 jobs:
-    build:
-        name: build
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                node-version: '20'
-            - name: Install dependencies
-              run: npm install
-            - name: Run build
-              run: npm run build
-    
-    deploy:
-        name: deploy
-        runs-on: ubuntu-latest
-        needs: build
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
-          - name: Setup Node.js and cache
-            uses: actions/setup-node@v4
-            with:
-              node-version: "20"
-              cache: "npm"
-          - name: Install firebase-tools
-            run: npm install --save-dev firebase-tools
-          - name: Decode Firebase service account key
-            run: |
-              echo "${{ secrets.FIREBASE_KEY }}" | base64 -d > ./firebase-key.json
-              echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase-key.json" >> $GITHUB_ENV
-          - name: change space
-            run: ./node_modules/.bin/firebase use ${{ secrets.FIREBASE_PROJECT_ID }}
-          - name: Deploy to Firebase Hosting
-            run: |
-              ./node_modules/.bin/firebase deploy
-            env:
-              FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-              FIREBASE_CLI_EXPERIMENTS: webframeworks
-          - name: delete rm firebase-key.json
-            run: rm firebase-key.json
-            if: ${{ always() }}
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps & build
+        run: |
+          npm ci          # lockfile がある場合はこちらが速い
+          npm run build   # Vite が dist/ を生成
+
+      - name: Install Firebase CLI
+        run: npm install --location=global firebase-tools
+
+      - name: Decode service-account key
+        run: |
+          echo "${{ secrets.FIREBASE_KEY }}" | base64 -d > "$GITHUB_WORKSPACE/firebase-key.json"
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase-key.json
+
+      - name: Deploy
+        run: firebase deploy --only hosting
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+      - name: Clean up key
+        if: ${{ always() }}
+        run: rm firebase-key.json
+

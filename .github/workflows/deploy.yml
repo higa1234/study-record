@@ -63,6 +63,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run test
       - run: npm run build          # ← Vite が dist/ を作る
         env: 
           VITE_SUPABASE_URL: ${{secrets.SUPABASE_URL}}

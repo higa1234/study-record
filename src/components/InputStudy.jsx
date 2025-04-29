@@ -3,8 +3,8 @@ export const InputStudy = (props) => {
     return (
       <div>
         <div>
-            <p>学習内容：<input type="text" value={studyText} onChange={onChangeStudyText}/></p>
-            <p>学習時間：<input type="number" value={studyHour} onChange={onChangeStudyHour}/> 時間</p>
+        <p><label>学習内容：<input id="title" type="text" value={studyText} onChange={onChangeStudyText}/></label></p>
+        <p><label>学習時間：<input id="hour" type="number" value={studyHour} onChange={onChangeStudyHour}/></label> 時間</p>
         </div>
         <hr />
         <div>

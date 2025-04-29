@@ -6,6 +6,8 @@ import { StudyTotalHours } from './components/StudyTotalHours';
 import {getAllStudyRecords, insertStudyRecords, deleteStudyRecordsById} from "./utils/SupaBaseFunctions.js";
 import { LodingScreen } from './components/LodingScreen.jsx';
 
+
+
 export const StudyLog = () => {
   const [studyText, setStudyText] = useState(""); // 勉強内容
   const [studyHour, setStudyHour] = useState(0); // 勉強時間
@@ -107,7 +109,7 @@ export const StudyLog = () => {
   return (
     <>
       <div>
-        <h1>学習記録一覧</h1>
+        <h1 data-testid="title">学習記録一覧</h1>
       </div>
 
       {isLoading && <LodingScreen></LodingScreen>}

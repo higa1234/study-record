@@ -4,7 +4,7 @@ import { InputStudy } from './components/InputStudy';
 import { StudyRecords } from './components/StudyRecords';
 import { StudyTotalHours } from './components/StudyTotalHours';
 import {getAllStudyRecords, insertStudyRecords, deleteStudyRecordsById} from "./utils/SupaBaseFunctions.js";
-import { LodingScreen } from './components/LodingScreen.jsx';
+import { LoadingScreen } from './components/LoadingScreen.jsx';
 
 
 
@@ -24,13 +24,16 @@ export const StudyLog = () => {
   // ]
 
   useEffect(() => {
-    try {
-      fetchData();
-    }catch(error){
-      // Error内容記述
-    }finally{
-      setIsLoading(false);
-    }
+    const fetch = async () => {
+      try {
+        await fetchData();
+      } catch (error) {
+        console.error("初期データ取得失敗", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetch();
   }, []);
   
 
@@ -112,7 +115,7 @@ export const StudyLog = () => {
         <h1 data-testid="title">学習記録一覧</h1>
       </div>
 
-      {isLoading && <LodingScreen></LodingScreen>}
+      {isLoading && <LoadingScreen></LoadingScreen>}
 
       <InputStudy
         studyText={studyText}

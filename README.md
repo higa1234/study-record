@@ -13,7 +13,7 @@ URL：https://study-record-44863.web.app/
 - データベース: Supabase
 - ホスティング: Firebase Hosting
 
-## 環境設定
+# 環境設定
 1. このリポジトリをクローン
 ```
 git clone https://github.com/higa1234/study-record.git

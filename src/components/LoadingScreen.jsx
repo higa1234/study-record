@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const LoadingScreen = () => {
     return(
-        <Sdiv>読み込み中…</Sdiv>
+        <Sdiv data-testid="loading">読み込み中…</Sdiv>
     )
 }
 

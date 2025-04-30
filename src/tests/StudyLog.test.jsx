@@ -20,7 +20,7 @@ import {
 import { StudyLog } from "../StudyLog.jsx";
 import React from "react";
 import '@testing-library/jest-dom'
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { render, screen, waitFor, cleanup, waitForElementToBeRemoved } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 beforeEach(() => {
@@ -47,8 +47,8 @@ describe("StudyLogのテスト", () => {
     async () => {
       render(<StudyLog />);
 
-      // でバック
-      //screen.debug();
+      // ローディングが終わるまで待機（data-testid追加が必要）
+      await waitForElementToBeRemoved(() => screen.getByTestId("loading"));
 
       // 初期の useEffect → fetchData() の完了を待つ
       await waitFor(() => {
@@ -94,6 +94,9 @@ describe("StudyLogのテスト", () => {
   test("削除ボタンを押すと学習記録が削除される 数が1つ減っていることをテストする", 
     async () => {
       render(<StudyLog />);
+
+      // ローディングが終わるまで待機（data-testid追加が必要）
+      await waitForElementToBeRemoved(() => screen.getByTestId("loading"));
   
       // 初期の useEffect → fetchData() の完了を待つ
       await waitFor(() => {
@@ -140,6 +143,9 @@ describe("StudyLogのテスト", () => {
     test("入力をしないで登録を押すとエラーが表示される", 
       async () => {
         render(<StudyLog />);
+
+      // ローディングが終わるまで待機（data-testid追加が必要）
+      await waitForElementToBeRemoved(() => screen.getByTestId("loading"));
     
         // 初期の useEffect → fetchData() の完了を待つ
         await waitFor(() => {
